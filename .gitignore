@@ -1,0 +1,24 @@
+# Python-specific
+__pycache__/
+*.pyc
+
+# Virtual environments
+.env/
+venv/
+
+# IDE files
+.idea/
+.vscode/
+*.code-workspace
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Other
+.DS_Store
+
+# user junk
+_support/
+.coverage
