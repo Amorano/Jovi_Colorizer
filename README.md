@@ -1,16 +1,11 @@
 <div align="center">
-
 <picture>
   <source srcset="https://raw.githubusercontent.com/Amorano/Jovimetrix-examples/refs/heads/master/res/logo-jovi_colorizer.png">
-  <img alt="Colorize ComfyUI nodes with defaults per node, node category or via regex filtering " width="256" height="256">
+  <img alt="Colorize ComfyUI nodes with defaults per node, node category or via regex filtering " width="384" height="384">
 </picture>
-
 </div>
-
 <div align="center">
-
-<a href="https://github.com/comfyanonymous/ComfyUI">COMFYUI</a> Colorize ComfyUI nodes with defaults per node, node category or via regex filtering
-
+<a href="https://github.com/comfyanonymous/ComfyUI">COMFYUI</a> Colorize ComfyUI nodes with defaults per node, node category or via regex filtering<br><br>
 </div>
 
 <div align="center">
@@ -43,7 +38,7 @@ Please consider sponsoring me if you enjoy the results of my work, code or docum
 
 ## UPDATES
 
-**2025/03/02** @1.0.0:
+**2025/03/03** @1.0.0:
 * intial breakout from Jovimetrix
 
 # INSTALLATION

@@ -594,6 +594,19 @@ app.registerExtension({
         document.head.appendChild(Object.assign(document.createElement('script'), {
             src: "https://cdn.jsdelivr.net/npm/@jaames/iro@5"
         }));
+
+        const styleTagId = 'jovimetrix-stylesheet';
+        let styleTag = document.getElementById(styleTagId);
+        if (styleTag) {
+            return;
+        }
+
+        document.head.appendChild(Object.assign(document.createElement('link'), {
+            id: styleTagId,
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: 'extensions/jovi_colorizer/jovi_colorizer.css'
+        }));
     },
     async setup() {
 
