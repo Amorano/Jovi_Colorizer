@@ -14,7 +14,6 @@
  ╚═════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 
 Colorize ComfyUI nodes with defaults per node, node category or via regex filtering
-                 http://www.github.com/amorano/Jovi_Colorizer
 """
 
 __author__ = "Alexander G. Morano"
