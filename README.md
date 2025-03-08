@@ -31,14 +31,14 @@ Please consider sponsoring me if you enjoy the results of my work, code or docum
 ## HIGHLIGHTS
 
 <div align="center">
-<img src="https://github.com/user-attachments/assets/cc7a6483-401b-4049-9645-6f57a940fb70" alt="Jovi Streaming Node Family" width="768"/>
+<img src="https://github.com/user-attachments/assets/1b3ee485-01fd-4873-8ef1-730a26ca2e37" alt="Colorize ComfyUI nodes with defaults per node, node category or via regex filtering" width="512"/>
 </div>
 
-*
+* Colorization for *ALL NODES* using their own node settings, their node group or via regex pattern matching
 
 ## UPDATES
 
-**2025/03/03** @1.0.0:
+**2025/03/08** @1.0.0:
 * intial breakout from Jovimetrix
 
 # INSTALLATION
