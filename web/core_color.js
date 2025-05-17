@@ -97,8 +97,8 @@ function getColor(node) {
 }
 
 function applyTheme(theme) {
-    const majorElements = document.querySelectorAll('.jov-panel-color-cat_major');
-    const minorElements = document.querySelectorAll('.jov-panel-color-cat_minor');
+    const majorElements = document.querySelectorAll('.jov-color-panel-cat_major');
+    const minorElements = document.querySelectorAll('.jov-color-panel-cat_minor');
     majorElements.forEach(el => el.classList.remove('light', 'dark'));
     minorElements.forEach(el => el.classList.remove('light', 'dark'));
     majorElements.forEach(el => el.classList.add(theme));
@@ -121,7 +121,7 @@ class JovimetrixPanelColorize {
         this.searchInput = $el("input", {
             type: "text",
             placeholder: "Filter nodes...",
-            className: "jov-search-input",
+            className: "jov-color-search-input",
             oninput: (e) => this.filterItems(e.target.value)
         });
         return this.searchInput;
@@ -138,8 +138,8 @@ class JovimetrixPanelColorize {
             if (!nameCell) return;
 
             const text = nameCell.textContent.toLowerCase();
-            const categoryMatch = row.classList.contains('jov-panel-color-cat_major') ||
-                                row.classList.contains('jov-panel-color-cat_minor');
+            const categoryMatch = row.classList.contains('jov-color-panel-cat_major') ||
+                                row.classList.contains('jov-color-panel-cat_minor');
 
             // Show categories if they or their children match
             if (categoryMatch) {
@@ -161,8 +161,8 @@ class JovimetrixPanelColorize {
         let currentRow = categoryRow.nextElementSibling;
 
         while (currentRow &&
-               !currentRow.classList.contains('jov-panel-color-cat_major') &&
-               !currentRow.classList.contains('jov-panel-color-cat_minor')) {
+               !currentRow.classList.contains('jov-color-panel-cat_major') &&
+               !currentRow.classList.contains('jov-color-panel-cat_minor')) {
             siblings.push(currentRow);
             currentRow = currentRow.nextElementSibling;
         }
@@ -381,7 +381,7 @@ class JovimetrixPanelColorize {
         });
     }
 
-    templateColorRow(data, type, classList = "jov-panel-color-category") {
+    templateColorRow(data, type, classList = "jov-color-panel-category") {
         const titleColor = data.title || LiteGraph.NODE_DEFAULT_COLOR;
         const bodyColor = data.body || LiteGraph.NODE_DEFAULT_BGCOLOR;
         const textColor = data.text || LiteGraph.NODE_TEXT_COLOR;
@@ -390,10 +390,10 @@ class JovimetrixPanelColorize {
         let rowClass = classList;
         let style = {};
 
-        if (classList === "jov-panel-color-cat_major") {
+        if (classList === "jov-color-panel-cat_major") {
             // Darker background for major categories
             style.backgroundColor = "var(--border-color)";
-        } else if (classList === "jov-panel-color-cat_minor") {
+        } else if (classList === "jov-color-panel-cat_minor") {
             style.backgroundColor = "var(--tr-odd-bg-color)";
         }
 
@@ -449,7 +449,7 @@ class JovimetrixPanelColorize {
                     body: CONFIG_THEME?.[majorCategory]?.body,
                     text: CONFIG_THEME?.[majorCategory]?.text
                 };
-                this.tbody.appendChild(this.templateColorRow(element, null, "jov-panel-color-cat_major"));
+                this.tbody.appendChild(this.templateColorRow(element, null, "jov-color-panel-cat_major"));
                 categories.push(majorCategory);
             }
 
@@ -461,7 +461,7 @@ class JovimetrixPanelColorize {
                     body: CONFIG_THEME?.[category]?.body,
                     text: CONFIG_THEME?.[category]?.text
                 };
-                this.tbody.appendChild(this.templateColorRow(element, null, "jov-panel-color-cat_minor"));
+                this.tbody.appendChild(this.templateColorRow(element, null, "jov-color-panel-cat_minor"));
                 categories.push(category);
             }
 
@@ -485,11 +485,11 @@ class JovimetrixPanelColorize {
             const table = this.createRegexPalettes();
             this.createColorPalettes();
 
-            this.title_content = $el("div.jov-title-header", { textContent: "EMPTY" });
-            this.content = $el("div.jov-panel-color", [
-                $el("div.jov-title", [this.title_content]),
+            this.title_content = $el("div.jov-color-header", { textContent: "EMPTY" });
+            this.content = $el("div.jov-color-panel", [
+                $el("div.jov-color", [this.title_content]),
                 this.createSearchInput(),  // Add search input
-                $el("div.jov-config-color", [table]),
+                $el("div", [table]),
                 $el("div.button", []),
             ]);
 
@@ -541,6 +541,19 @@ app.registerExtension({
         },
     ],
     async init() {
+        const styleTagId = 'jovi_color-stylesheet';
+        let styleTag = document.getElementById(styleTagId);
+        if (styleTag) {
+            return;
+        }
+
+        document.head.appendChild(Object.assign(document.createElement('link'), {
+            id: styleTagId,
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: 'extensions/jovi_colorizer/jovi_colorizer.css'
+        }));
+
         document.head.appendChild(Object.assign(document.createElement('script'), {
             src: "https://cdn.jsdelivr.net/npm/@jaames/iro@5"
         }));

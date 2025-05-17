@@ -1,7 +1,7 @@
 [project]
 name = "jovi_colorizer"
 description = "Colorize ComfyUI nodes with defaults per node, node category or via regex filtering."
-version = "1.0.1"
+version = "1.0.2"
 license = { file = "LICENSE" }
 readme = "README.md"
 authors = [{ name = "Alexander G. Morano", email = "amorano@gmail.com" }]
