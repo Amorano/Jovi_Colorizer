@@ -38,6 +38,9 @@ Please consider sponsoring me if you enjoy the results of my work, code or docum
 
 ## UPDATES
 
+**2025/05/16** @1.0.1:
+* removed old Jovimetrix colorizer init code
+
 **2025/03/08** @1.0.0:
 * intial breakout from Jovimetrix
 

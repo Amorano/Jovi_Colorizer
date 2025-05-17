@@ -20,11 +20,15 @@ const DEFAULT_THEME = {
     "JOV_MIDI 🎛️": { title: "#66661f" },
     "JOV_SPOUT 📺": { title: "#1f6666" },
     "JOVIMETRIX 🔺🟩🔵": { title: "#a23da2" },
-    "JOVIMETRIX 🔺🟩🔵/CREATE": { title: "#1b871b" },
-    "JOVIMETRIX 🔺🟩🔵/COMPOSE": { title: "#5c1f9a" },
+    "JOVIMETRIX 🔺🟩🔵/ADJUST": { title: "#2f4e7d" },
+    "JOVIMETRIX 🔺🟩🔵/ANIMATION": { title: "#777738" },
     "JOVIMETRIX 🔺🟩🔵/CALC": { title: "#993838" },
-    "JOVIMETRIX 🔺🟩🔵/DEVICE": { title: "#1f9999" },
-    "JOVIMETRIX 🔺🟩🔵/UTILITY": { title: "#0a0a0a" }
+    "JOVIMETRIX 🔺🟩🔵/COLOR": { title: "#1b1b87" },
+    "JOVIMETRIX 🔺🟩🔵/COMPOSE": { title: "#5c1f9a" },
+    "JOVIMETRIX 🔺🟩🔵/CREATE": { title: "#1b871b" },
+    "JOVIMETRIX 🔺🟩🔵/TRANSFORM": { title: "#871b87" },
+    "JOVIMETRIX 🔺🟩🔵/UTILITY": { title: "#0a0a0a" },
+    "JOVIMETRIX 🔺🟩🔵/VARIABLE": { title: "#167070" },
 };
 
 const SETTING_REGEX = 'jovi.color.regex';
@@ -505,149 +509,145 @@ class JovimetrixPanelColorize {
     }
 }
 
-const _SIDEBAR_ID = "jovimetrix.sidebar.colorizer";
-if (!app.extensionManager.getSidebarTabs().some(tab => tab.id == _SIDEBAR_ID)) {
-    app.extensionManager.registerSidebarTab({
-        id: _SIDEBAR_ID,
-        icon: "pi pi-palette",
-        title: "JOVIMETRIX COLORIZER 🔺🟩🔵",
-        tooltip: "Color node title and body via unique name, group and regex filtering\nJOVIMETRIX 🔺🟩🔵",
-        type: "custom",
-        render: async (el) => {
-            el.innerHTML = "";
-            if (typeof PANEL_COLORIZE === "undefined" || !PANEL_COLORIZE) {
-                PANEL_COLORIZE = new JovimetrixPanelColorize();
-            }
-            el.appendChild(PANEL_COLORIZE.createContent());
+app.extensionManager.registerSidebarTab({
+    id: "jovimetrix.sidebar.colorizer",
+    icon: "pi pi-palette",
+    title: "JOVIMETRIX COLORIZER 🔺🟩🔵",
+    tooltip: "Color node title and body via unique name, group and regex filtering\nJOVIMETRIX 🔺🟩🔵",
+    type: "custom",
+    render: async (el) => {
+        el.innerHTML = "";
+        if (typeof PANEL_COLORIZE === "undefined" || !PANEL_COLORIZE) {
+            PANEL_COLORIZE = new JovimetrixPanelColorize();
         }
-    });
-
-    app.registerExtension({
-        name: "jovimetrix.color",
-        settings: [
-            {
-                id: SETTING_REGEX,
-                name: "Regex Entries for Jovimetrix Colorizer",
-                type: "hidden",
-                defaultValue: {}
-            },
-            {
-                id: SETTING_THEME,
-                name: "Node theme entries for Jovimetrix Colorizer",
-                type: "hidden",
-                defaultValue: {}
-            },
-        ],
-        async init() {
-            document.head.appendChild(Object.assign(document.createElement('script'), {
-                src: "https://cdn.jsdelivr.net/npm/@jaames/iro@5"
-            }));
-        },
-        async setup() {
-
-            var response = await api.fetchApi("/object_info", { cache: "no-store" });
-            const all_nodes = await response.json();
-
-            NODE_LIST = Object.entries(all_nodes).sort((a, b) => {
-                const categoryA = a[1].category.toLowerCase();
-                const categoryB = b[1].category.toLowerCase();
-
-                // First, sort by category
-                if (categoryA < categoryB) return -1;
-                if (categoryA > categoryB) return 1;
-
-                // If categories are equal, sort by key name
-                return a[0].toLowerCase().localeCompare(b[0].toLowerCase());
-            });
-            NODE_LIST = Object.fromEntries(NODE_LIST);
-
-            let CONFIG_REGEX = app.extensionManager.setting.get(SETTING_REGEX) || [];
-            if (!Array.isArray(CONFIG_REGEX)) {
-                CONFIG_REGEX = [];
-            }
-            while (CONFIG_REGEX.length < 5) {
-                CONFIG_REGEX.push({ "regex": "" });
-            }
-            await app.extensionManager.setting.set(SETTING_REGEX, CONFIG_REGEX);
-
-            let CONFIG_THEME = app.extensionManager.setting.get(SETTING_THEME) || {};
-            Object.keys(DEFAULT_THEME).forEach(key => {
-                if (!(key in CONFIG_THEME)) {
-                    CONFIG_THEME[key] = DEFAULT_THEME[key];
-                }
-            });
-
-            try {
-                await app.extensionManager.setting.set(SETTING_THEME, CONFIG_THEME);
-            } catch (error) {
-                console.error("Failed to update settings:", error);
-            }
-        }
-    });
-
-    const origDrawNode = LGraphCanvas.prototype.drawNode;
-    LGraphCanvas.prototype.drawNode = function (node, ctx) {
-        // STASH THE CURRENT COLOR STATE
-        const origTitle = node.constructor.title_text_color;
-        const origSelectedTitleColor = LiteGraph.NODE_SELECTED_TITLE_COLOR;
-        const origNodeTextColor = LiteGraph.NODE_TEXT_COLOR;
-        const origWidgetSecondaryTextColor = LiteGraph.WIDGET_SECONDARY_TEXT_COLOR;
-        const origWidgetTextColor = LiteGraph.WIDGET_TEXT_COLOR;
-        const origNodeTitleColor = LiteGraph.NODE_TITLE_COLOR;
-        const origWidgetBGColor = LiteGraph.WIDGET_BGCOLOR;
-
-        const new_color = getColor(node);
-
-        if (new_color) {
-            // Title text when node is selected
-            //LiteGraph.NODE_SELECTED_TITLE_COLOR = '#FF00FF'
-
-            if (new_color?.text) {
-                node.constructor.title_text_color = new_color.text;
-            } else {
-                const color = node.constructor.title_text_color;
-                if (color) {
-                    node.constructor.title_text_color = colorContrast(color);
-                }
-            }
-
-            // Slot label text
-            //LiteGraph.NODE_TEXT_COLOR = '#7777FF'
-
-            // Widget Text
-            //LiteGraph.WIDGET_SECONDARY_TEXT_COLOR = "#FFFFFF"
-
-            // Widget controls + field text
-            //LiteGraph.WIDGET_TEXT_COLOR = '#FF0000';
-
-            // Widget control BG color
-            // LiteGraph.WIDGET_BGCOLOR
-
-            // node's title bar background color
-            if (new_color?.title) {
-                node.color = new_color.title;
-            }
-
-            // node's body background color
-            if (new_color?.body) {
-                node.bgcolor = new_color.body;
-            }
-        }
-
-        const res = origDrawNode.apply(this, arguments);
-
-        // Default back to last pushed state ComfyUI colors
-        if (new_color) {
-            node.constructor.title_text_color = origTitle;
-            LiteGraph.NODE_SELECTED_TITLE_COLOR = origSelectedTitleColor;
-            LiteGraph.NODE_TEXT_COLOR = origNodeTextColor;
-            LiteGraph.WIDGET_SECONDARY_TEXT_COLOR = origWidgetSecondaryTextColor;
-            LiteGraph.WIDGET_TEXT_COLOR = origWidgetTextColor;
-            LiteGraph.NODE_TITLE_COLOR = origNodeTitleColor;
-            LiteGraph.WIDGET_BGCOLOR = origWidgetBGColor;
-        }
-
-        return res;
+        el.appendChild(PANEL_COLORIZE.createContent());
     }
-    console.info("registered jovi colorizer");
+});
+
+app.registerExtension({
+    name: "jovimetrix.color",
+    settings: [
+        {
+            id: SETTING_REGEX,
+            name: "Regex Entries for Jovimetrix Colorizer",
+            type: "hidden",
+            defaultValue: {}
+        },
+        {
+            id: SETTING_THEME,
+            name: "Node theme entries for Jovimetrix Colorizer",
+            type: "hidden",
+            defaultValue: {}
+        },
+    ],
+    async init() {
+        document.head.appendChild(Object.assign(document.createElement('script'), {
+            src: "https://cdn.jsdelivr.net/npm/@jaames/iro@5"
+        }));
+    },
+    async setup() {
+
+        var response = await api.fetchApi("/object_info", { cache: "no-store" });
+        const all_nodes = await response.json();
+
+        NODE_LIST = Object.entries(all_nodes).sort((a, b) => {
+            const categoryA = a[1].category.toLowerCase();
+            const categoryB = b[1].category.toLowerCase();
+
+            // First, sort by category
+            if (categoryA < categoryB) return -1;
+            if (categoryA > categoryB) return 1;
+
+            // If categories are equal, sort by key name
+            return a[0].toLowerCase().localeCompare(b[0].toLowerCase());
+        });
+        NODE_LIST = Object.fromEntries(NODE_LIST);
+
+        let CONFIG_REGEX = app.extensionManager.setting.get(SETTING_REGEX) || [];
+        if (!Array.isArray(CONFIG_REGEX)) {
+            CONFIG_REGEX = [];
+        }
+        while (CONFIG_REGEX.length < 5) {
+            CONFIG_REGEX.push({ "regex": "" });
+        }
+        await app.extensionManager.setting.set(SETTING_REGEX, CONFIG_REGEX);
+
+        let CONFIG_THEME = app.extensionManager.setting.get(SETTING_THEME) || {};
+        Object.keys(DEFAULT_THEME).forEach(key => {
+            if (!(key in CONFIG_THEME)) {
+                CONFIG_THEME[key] = DEFAULT_THEME[key];
+            }
+        });
+
+        try {
+            await app.extensionManager.setting.set(SETTING_THEME, CONFIG_THEME);
+        } catch (error) {
+            console.error("Failed to update settings:", error);
+        }
+    }
+});
+
+const origDrawNode = LGraphCanvas.prototype.drawNode;
+LGraphCanvas.prototype.drawNode = function (node, ctx) {
+    // STASH THE CURRENT COLOR STATE
+    const origTitle = node.constructor.title_text_color;
+    const origSelectedTitleColor = LiteGraph.NODE_SELECTED_TITLE_COLOR;
+    const origNodeTextColor = LiteGraph.NODE_TEXT_COLOR;
+    const origWidgetSecondaryTextColor = LiteGraph.WIDGET_SECONDARY_TEXT_COLOR;
+    const origWidgetTextColor = LiteGraph.WIDGET_TEXT_COLOR;
+    const origNodeTitleColor = LiteGraph.NODE_TITLE_COLOR;
+    const origWidgetBGColor = LiteGraph.WIDGET_BGCOLOR;
+
+    const new_color = getColor(node);
+
+    if (new_color) {
+        // Title text when node is selected
+        //LiteGraph.NODE_SELECTED_TITLE_COLOR = '#FF00FF'
+
+        if (new_color?.text) {
+            node.constructor.title_text_color = new_color.text;
+        } else {
+            const color = node.constructor.title_text_color;
+            if (color) {
+                node.constructor.title_text_color = colorContrast(color);
+            }
+        }
+
+        // Slot label text
+        //LiteGraph.NODE_TEXT_COLOR = '#7777FF'
+
+        // Widget Text
+        //LiteGraph.WIDGET_SECONDARY_TEXT_COLOR = "#FFFFFF"
+
+        // Widget controls + field text
+        //LiteGraph.WIDGET_TEXT_COLOR = '#FF0000';
+
+        // Widget control BG color
+        // LiteGraph.WIDGET_BGCOLOR
+
+        // node's title bar background color
+        if (new_color?.title) {
+            node.color = new_color.title;
+        }
+
+        // node's body background color
+        if (new_color?.body) {
+            node.bgcolor = new_color.body;
+        }
+    }
+
+    const res = origDrawNode.apply(this, arguments);
+
+    // Default back to last pushed state ComfyUI colors
+    if (new_color) {
+        node.constructor.title_text_color = origTitle;
+        LiteGraph.NODE_SELECTED_TITLE_COLOR = origSelectedTitleColor;
+        LiteGraph.NODE_TEXT_COLOR = origNodeTextColor;
+        LiteGraph.WIDGET_SECONDARY_TEXT_COLOR = origWidgetSecondaryTextColor;
+        LiteGraph.WIDGET_TEXT_COLOR = origWidgetTextColor;
+        LiteGraph.NODE_TITLE_COLOR = origNodeTitleColor;
+        LiteGraph.WIDGET_BGCOLOR = origWidgetBGColor;
+    }
+
+    return res;
 }
