@@ -510,10 +510,10 @@ class JovimetrixPanelColorize {
 }
 
 app.extensionManager.registerSidebarTab({
-    id: "jovimetrix.sidebar.colorizer",
+    id: "jovi.sidebar.colorizer",
     icon: "pi pi-palette",
-    title: "JOVIMETRIX COLORIZER 🔺🟩🔵",
-    tooltip: "Color node title and body via unique name, group and regex filtering\nJOVIMETRIX 🔺🟩🔵",
+    title: "JOVI COLORIZER 🔺🟩🔵",
+    tooltip: "Color node title and body via unique name, group and regex filtering\nJOVI_COLORIZER",
     type: "custom",
     render: async (el) => {
         el.innerHTML = "";
@@ -525,17 +525,17 @@ app.extensionManager.registerSidebarTab({
 });
 
 app.registerExtension({
-    name: "jovimetrix.color",
+    name: "jovi.color",
     settings: [
         {
             id: SETTING_REGEX,
-            name: "Regex Entries for Jovimetrix Colorizer",
+            name: "Regex Entries for Jovi Colorizer",
             type: "hidden",
             defaultValue: {}
         },
         {
             id: SETTING_THEME,
-            name: "Node theme entries for Jovimetrix Colorizer",
+            name: "Node theme entries for Jovi Colorizer",
             type: "hidden",
             defaultValue: {}
         },

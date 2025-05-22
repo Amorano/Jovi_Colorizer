@@ -38,6 +38,9 @@ Please consider sponsoring me if you enjoy the results of my work, code or docum
 
 ## UPDATES
 
+**2025/05/22** @1.0.3:
+* Fixed branding in tooltips (Jovimetrix -> Jovi_Colorizer)
+
 **2025/05/17** @1.0.2:
 * removed old Jovimetrix colorizer init code
 * cleaned up the css
